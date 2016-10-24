@@ -1,0 +1,115 @@
+---
+title: "Linear Regression 1"
+author: "John Yuill"
+date: "October 23, 2016"
+output: html_document
+---
+
+### Purpose
+* collect practices around correlation and regression
+* primary initial source is Marin Stats R video on YT
+    + https://www.youtube.com/watch?v=66z_MRwtFJM
+
+#### Collect data and have a look
+```{r}
+library(ggplot2)
+
+
+lungcap <- read.csv("data-source/LungCapData.csv",header=TRUE, stringsAsFactors=FALSE)
+str(lungcap)
+
+plot(lungcap$Age, lungcap$LungCap, main="Scatterplot")
+ggplot(data=lungcap, aes(x=Age,y=LungCap))+geom_point()+theme_bw()
+
+```
+
+#### Check Correlation and Create Linear Model
+
+* Check correlation
+```{r}
+cor(lungcap$Age,lungcap$LungCap)
+```
+
+* Generate a linear model
+```{r}
+mod <- lm(lungcap$LungCap ~ lungcap$Age)
+summary(mod)
+```
+
+* [sidebar] determine attributes available for the mod object
+```{r}
+attributes(mod)
+```
+
+* check coefficients 
+```{r}
+mod$coef
+coef(mod)
+```
+
+* get confidence intervals
+    + 95% is default
+```{r}
+confint(mod)
+```
+    + adjust to 99%
+```{r}
+confint(mod, level=0.99)
+```
+
+* scatterplot with linear regression line
+```{r}
+plot(lungcap$Age, lungcap$LungCap, main="Scatterplot")
+abline(mod, col=2, lwd=3)
+
+ggplot(data=lungcap, aes(x=Age,y=LungCap))+geom_point()+
+theme_bw()+
+geom_smooth(method=lm, se=TRUE)
+
+```
+
+#### Check validity of assumptions
+
+Assumptions
+1. Y-values (or the errors) are independent
+    + requires knowledge of the study design or data collection
+2. Y-values can be expressed as a linear function of the X variable
+3. Variation of observations around the regression line (residual standard errors (SE)) is constant (homoscedasticity)
+4. For given value of X, Y values (or the error) are normally distributed
+
+* validation of #1 requires knowledge of the study design or data collected
+* others can be checked by examining the residuals or errors
+
+##### R has built-in regression diagnostic plots
+
+Diagnostic plots  
+
+* highly useful for multiple regression, where the model can't be captured in a scatter plot
+
+* unless mfrow is set, plots require hitting 'return' in console  
+* won't run in R Markdown - will cause error
+```{r}
+par(mfrow=c(2,2))
+plot(mod)
+
+
+```
+
+The Plots:  
+
+1. Residuals vs Fitted
+    + should see no real pattern
+    + line should be flat - indicates linearity
+    + heteroskedasticity will have a 'megaphone' shape, wider to the right
+2. Normal Q-Q
+    + if errors are normally distributed, points should fall along line
+3. Scale-Location 
+    + line should be flat - if not, indicates issues with linearity
+4. Residuals vs Leverage
+    + 
+
+
+```{r}
+
+```
+
