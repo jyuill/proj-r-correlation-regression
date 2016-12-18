@@ -14,3 +14,8 @@ ggplot(diamond, aes(x=carat,y=price))+
 
 fit <- lm(price ~ carat, data=diamond)
 coef(fit)
+
+summary(fit)
+
+fit2 <- lm(price ~ I(carat-mean(carat)), data=diamond)
+summary(fit2)
