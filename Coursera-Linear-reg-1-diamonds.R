@@ -94,7 +94,7 @@ summary(fitwave)
 
 ## check residuals
 ggplot(data.frame(x=x,y=resid(lm(y~x))),aes(x=x,y=y))+
-  geom_hline(yintercept=0, size=2)+
+  geom_hline(yintercept=0, size=1)+
   geom_point(size=4, colour="red", alpha=0.7)+
   xlab("x")+ylab("residual")
 ## pattern is MUCH more obvious
