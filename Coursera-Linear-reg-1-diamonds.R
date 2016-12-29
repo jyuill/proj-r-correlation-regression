@@ -6,7 +6,15 @@ library(ggplot2)
 
 data(diamond) ## original example uses 'diamond' data set from UsingR - not available for reasons mentioned above
 
-diamond <- diamonds
+diamond <- diamonds ## use the built-in diamonds dataset
+
+## if using the 'diamonds' dataset, select random subset to make it more workable
+selectnum <- nrow(diamond)/100
+selects <- as.integer(runif(selectnum,min=1,max=53940))
+length(selects)
+summary(selects)
+hist(selects)
+diamond <- diamond[selects,]
 
 #### CHECK OUT DATA
 
@@ -24,7 +32,7 @@ ggplot(diamond, aes(x=carat,y=price))+
 #### LINEAR REGRESSION
 ## fit linear model to price data dependent on carat size
 
-fit <- lm(price ~ carat, data=diamonds)
+fit <- lm(price ~ carat, data=diamond)
 coef(fit)
 
 summary(fit)
@@ -99,4 +107,23 @@ ggplot(data.frame(x=x,y=resid(lm(y~x))),aes(x=x,y=y))+
   xlab("x")+ylab("residual")
 ## pattern is MUCH more obvious
   
+## working with residuals
+summary(fit) # complete summary of linear model
+summary(fit)$sigma # residual -> equal to 'Residual standard error' in complete summary
+
+## R squared
+## % of total variation in Y that is explained by the model
+## can be misleading:
+### deleting data can increase R squared (esp outliers)
+### adding variables to regression model ALWAYS increases R squared
+
+## CONFIDENCE INTERVAL
+coeftable <- summary(fit)$coefficients # coefficient table for the linear model
+coeftable
+coeftable[2,1] # slope coefficient
+## slope coefficient +/- standard error
+coeftable[2,1]+c(-1,1)*coeftable[2,2]
+## 95% confidence interval - includes 95 t quantile with model degrees of freedom
+coeftable[2,1]+c(-1,1)*coeftable[2,2]*qt(.975,df=fit$df)
+## 95% confidence that 1 carat increase in diamond size will result in 7352-7884 price increase.
 
