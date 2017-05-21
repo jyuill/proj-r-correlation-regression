@@ -53,5 +53,6 @@ ggplot(ir2, aes(x=Species,y=Petal.Width))+geom_boxplot()
 ## WHAT I WANT TO KNOW IS:
 ## what are the techniques for determining more certainly where to draw the lines
 ## - logistic regression on petal.width ?
+##    - test with both sepal width and pedal width
 ## - clustering to establish break-points?
 
