@@ -70,10 +70,15 @@ plot(ir3$Sepal.Width,fitted.values(logr1))
 ## add observed values in red
 points(ir3$Sepal.Width,ir3$spec,col="red")
 
+## use popbio for more insightful visualization
+library(popbio)
+logi.hist.plot(ir3$Sepal.Width, ir3$spec, boxp=FALSE, type="count", col="gray", xlabel="size")
+
 ## get prediction based on sepal width
 nd <- data.frame(Sepal.Width=3.5)
 ## at 3.5 there is 94% chance that dependent variable is 1 (versicolor)
 predict(logr1,nd, type='response')
+predict(logr1, list(Sepal.Width=3), type="response")
 
 ## logistic regression on pedal.width
 ## - model doesn't work - 'algorithm did not converge'
@@ -114,3 +119,6 @@ summary(model)
 ## make prediction based on wt and displacement
 newdata<- data.frame(wt=2.1,disp=180)
 predict(model, newdata, type='response')
+
+
+
