@@ -173,3 +173,62 @@ df.test <- df %>% filter(cumdist<0.4)
 sum(df.test$num)
 sum(df$num)
 sum(df.test$num)/sum(df$num)
+
+## LONG-TAIL SIM ####
+
+## custom distribution
+vals <- NULL
+for(t in 1:1000){
+  s <- sample(x=1:20, size=1)
+  if(s<=10){
+    val <- runif(n=1, min=1, max=10)
+  } else if(s<=15){
+    val <- runif(n=1, min=11, max=30)
+  } else if (s<=18){
+    val <- runif(n=1, min=31, max=70)
+  } else {
+    val <- runif(n=1, min=71, max=150)
+  }
+  
+  vals <- c(vals, val)
+}
+hist(vals)
+
+## could create wide normal and cut off start
+## still not long enough tail
+hist(rnorm(n=1000, mean=10000, sd=20000))
+## rpois with lambda 4 has possibilities
+hist(rpois(n=10000, lambda=4))
+## use rpois
+rp <- rpois(n=10000, lambda=4)
+## magnify values for volume and additional spread
+rp2 <- rp^2.5
+hist(rp2)
+
+df.rp <- data.frame(values=rp2)
+
+## sort
+df.rp <- df.rp %>% arrange(values)
+df.rp$values <- as.integer(df.rp$values)
+## group for freq dist calculations
+df.rp.g <- df.rp %>% group_by(values) %>% summarize(freq=n())
+## add some calculations
+df.rp.g <- df.rp.g %>% mutate(
+  cumfreq=cumsum(freq),
+  freqpc=freq/sum(freq),
+  cumfreqpc=cumsum(freq)/sum(freq),
+  ttls=values*freq,
+  ttl.pc=ttls/sum(ttls),
+  ttl.cum=cumsum(ttls),
+  ttl.cum.pc=ttl.cum/sum(ttls)
+)
+
+ggplot(df.rp.g, aes(x=values, y=cumfreq))+geom_line()
+## density
+ggplot(df.rp.g, aes(x=values, y=freqpc))+geom_line()
+## cdf
+ggplot(df.rp.g, aes(x=values, y=cumfreqpc))+geom_line()
+## percentiles
+ggplot(df.rp.g, aes(x=cumfreqpc, y=values))+geom_line()
+## distribution of total value by percentile (cdf)
+ggplot(df.rp.g, aes(x=cumfreqpc, y=ttl.cum.pc))+geom_line()
